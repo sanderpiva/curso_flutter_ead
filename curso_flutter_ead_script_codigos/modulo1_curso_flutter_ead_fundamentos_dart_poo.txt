@@ -1,0 +1,161 @@
+
+exe1: Classe, Objeto, Consturtor padrão
+
+void main(){
+
+  //print("oi");
+  Animal a1 = Animal("Cao", "Pepito", 10);
+  a1.dados();
+  a1.brincar();
+}
+
+class Animal{
+
+  String nome="";
+  String raca="";
+  int idade=0;
+
+  Animal(String raca, String nome, int idade){
+    
+    this.raca=raca;
+    this.nome=nome;
+    this.idade=idade;
+
+  }
+
+
+  void dados(){
+
+    print("Raça: ${this.raca}, Nome: ${this.nome}, Idade: ${this.idade}");
+
+  }
+
+  void brincar(){
+
+    if(this.idade<10)
+      print("Animal brinca com bolinha");
+    else
+      print("Animal brinca com bola de capotão");
+
+  }
+
+}
+
+
+//exe2: Classe, Objeto, Construtor, Herança, Classe Abstrata, Polimorfismo e Interface
+
+void main() {
+  Cao a1 = Cao("Cão", "Pepito", 9);
+  a1.dados();
+  a1.brincar();
+  a1.fazerBarulho();
+  print("Intensidade do som: ${a1.intensidadeSomEmitido()} decibeis");
+}
+
+abstract class AnimalTem {
+  int intensidadeSomEmitido();
+}
+
+abstract class Animal {
+  String nome;
+  String raca;
+  int idade;
+
+  Animal(this.raca, this.nome, this.idade);
+
+  void dados() {
+    print("Raça: $raca, Nome: $nome, Idade: $idade");
+  }
+
+  void brincar() {
+    if (this.idade < 10) {
+      print("Animal brinca com bolinha");
+    } else {
+      print("Animal brinca com bola de capotão");
+    }
+  }
+
+  void fazerBarulho() {}
+
+}
+
+class Cao extends Animal implements AnimalTem {
+  Cao(String raca, String nome, int idade) : super(raca, nome, idade);
+
+  @override
+  void fazerBarulho() {
+    print("Som emitido: Au au!");
+  }
+
+  @override
+  int intensidadeSomEmitido(){
+    if(super.idade < 10){
+      return 10;
+    } else {
+      return 30;
+    }
+  }
+}
+
+
+//exe3: Mixins 
+
+void main() {
+
+  Pato pato = Pato("Pato Donald");
+  pato.mostrarNome();  
+  pato.voar();         
+  pato.nadar();        
+}
+
+mixin Voador {
+  void voar() {
+    print("Está voando!");
+  }
+}
+
+mixin Nadador {
+  void nadar() {
+    print("Está nadando!");
+  }
+}
+
+class Animal {
+  String nome;
+
+  Animal(this.nome);
+
+  void mostrarNome() {
+    print("Nome do animal: $nome");
+  }
+}
+
+class Pato extends Animal with Voador, Nadador {
+  Pato(String nome) : super(nome);
+}
+
+
+//exe4: Manipulação de exceções
+
+void dividir(int a, int b) {
+  try {
+    
+    if (b == 0) {
+      throw Exception("Divisão por zero não permitida.");
+    }
+    var resultado = a / b;
+    print("Resultado: $resultado");
+  } 
+  catch (e) {
+    print("Erro: Divisão por zero não permitida.");
+  } 
+  finally {
+    print("Operação finalizada.");
+  }
+}
+
+void main() {
+  dividir(10, 2); 
+  dividir(10, 0); 
+}
+//fim
