@@ -1,0 +1,139 @@
+
+//script exercício módulo 3: Provider/Multiprovider
+
+//Instalar dependencia do provider: pubspec.yaml. No Androi Studio fica:
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.2
+
+
+//main.dart
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+
+class ThemeProvider with ChangeNotifier {
+  bool _isDarkMode = false;
+
+  bool get isDarkMode => _isDarkMode;
+
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    notifyListeners();
+  }
+}
+
+class CounterProvider with ChangeNotifier {
+  int _counter = 0;
+
+  int get counter => _counter;
+
+  void incrementCounter() {
+    _counter++;
+    notifyListeners();
+  }
+}
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => CounterProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
+}
+
+// Widget principal da aplicação
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          theme: themeProvider.isDarkMode ? ThemeData.dark() : ThemeData.light(),
+          home: HomeScreen(),
+          debugShowCheckedModeBanner: false,
+        );
+      },
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool _isButtonPressed = false; // Estado local para o botão
+
+  @override
+  Widget build(BuildContext context) {
+    final counterProvider = Provider.of<CounterProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Flutter MultiProvider'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Pressione o botão para alternar o tema e aumentar o contador',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            // Container com cor e texto condicionais
+            Container(
+              margin: EdgeInsets.all(20.0),
+              color: _isButtonPressed ? Colors.blue : Colors.grey[200],
+              height: 200,
+              width: 200,
+              child: Center(
+                child: Text(
+                  _isButtonPressed
+                      ? 'Botão foi pressionado!\nContador: ${counterProvider.counter}'
+                      : 'Botão não foi pressionado\nContador: ${counterProvider.counter}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: _isButtonPressed ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+
+          context.read<ThemeProvider>().toggleTheme();
+
+          context.read<CounterProvider>().incrementCounter();
+
+          setState(() {
+            _isButtonPressed = !_isButtonPressed;
+          });
+        },
+        child: Icon(Icons.brightness_6),
+      ),
+    );
+  }
+}
+
+
+//
